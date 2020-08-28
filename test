@@ -56,26 +56,12 @@ def set_memory():
 
 def execute():
     global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC
-    
-    #LOAD M(X)
+    #load M(X)
     if(IR == "00000001"):
-        AC = int(memory[bintodec(MAR)])
+        AC = memory[bintodec(MAR)]
         print("Found the LOAD Instruction !!")
-    
-    #ADD M(X)
-    elif(IR == "00000101"):
-        AC+=int(memory[bintodec(MAR)])
-        print("Found the ADD Instruction")
 
-    #STOR M(X)
-    elif(IR=="00100001"):
-        memory[bintodec(MAR)] = str(AC)
-        print("Found the STOR: content at {}  = {}".format(bintodec(MAR), memory[bintodec(MAR)]))
 
-    #SUB M(X)
-    elif(IR=="00000110"):
-        AC-=int(memory[bintodec(MAR)])
-        print("found a subtract operation!")
 
 
     print('AC:_' , AC)
@@ -134,8 +120,8 @@ def fetch():
 def get_memory():
     outf = open('out.txt', 'w')
     for line in memory:
-        # if(len(line) < 20):
-        #     print(int(line))
+        if(len(line) < 20):
+            print(int(line))
         outf.write(line + '\n')
     outf.close()
     return
@@ -146,8 +132,7 @@ if __name__ == "__main__":
     init_memory()
     make_halt()
     set_memory()
+    get_memory()
     print()
     print()
     fetch()
-    get_memory()
-
