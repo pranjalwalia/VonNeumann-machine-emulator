@@ -14,3 +14,8 @@
 #     else:
 #         break
 # f.close()
+def binarytodecimal(n):
+    return int(n,2)
+print(binarytodecimal('000001100100'))
+print(binarytodecimal('000001100101'))
+print(binarytodecimal('000011001000'))
