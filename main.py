@@ -1,12 +1,13 @@
 import sys,os
 
-PC = 1
+PC = 0
 MBR = ""
 IR = ""
 IBR = ""
 MAR = ""
 HALT = ""
 AC=0
+MQ=0
 
 def make_halt():
     global HALT;
@@ -52,38 +53,116 @@ def set_memory():
 
     f.close()
 
+'''
+LOAD M(x) Add M(x)
+Stor M(x) Add M(x)
+JUMP (x,left) Sub M(x)
+Halt()
+'''
+
 
 
 def execute():
-    global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC
+    global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC; global MQ
     
-    #LOAD M(X)
+    #?------------------------BEGIN DATA TRANSFER OPS------------------------------
+    #!LOAD M(X)
     if(IR == "00000001"):
         AC = int(memory[bintodec(MAR)])
-        print("Found the LOAD Instruction !!")
-    
-    #ADD M(X)
-    elif(IR == "00000101"):
-        AC+=int(memory[bintodec(MAR)])
-        print("Found the ADD Instruction")
+        print("Found the LOAD Instruction at {} !! load: {}".format(PC , int(memory[bintodec(MAR)])))
 
-    #STOR M(X)
+    #! LOAD MQ,MX
+    elif("00001001"):
+        MQ = int(memory[bintodec(MAR)])
+        
+    #! LOAD MQ
+    elif(IR=="00001010"):
+        AC = MQ
+
+
+    #!STOR M(X)
     elif(IR=="00100001"):
         memory[bintodec(MAR)] = str(AC)
-        print("Found the STOR: content at {}  = {}".format(bintodec(MAR), memory[bintodec(MAR)]))
+        print("Found the STOR at {}!! content at {}  => {}".format( PC, bintodec(MAR), memory[bintodec(MAR)]))
 
-    #SUB M(X)
+    #!LOAD -M(X)
+    if(IR == "00000010"):
+        AC = int(memory[bintodec(MAR)]); AC*=(-1)
+
+    #!LOAD abs_M(X)
+    if(IR == "00000011"):
+        AC = abs(int(memory[bintodec(MAR)]))
+    
+    #!LOAD -abs_M(X)
+    if(IR == "00000100"):
+        AC = abs(int(memory[bintodec(MAR)])); AC*=(-1)
+    
+
+    #?------------------------END DATA TRANSFER OPS------------------------------
+
+
+
+    #? --------------------- BEGIN ARITHMETIC OPERATIONS ---------------------------
+    #!ADD M(X)
+    elif(IR == "00000101"):
+        AC+=int(memory[bintodec(MAR)])
+        print("Found the ADD Instruction at {} !! add: {}".format(PC , int(memory[bintodec(MAR)])))
+    
+    #! ADD abs(M(x))
+    elif(IR == "00000111"):
+        AC+=abs(int(memory[bintodec(MAR)]))
+        print("Found the abs ADD Instruction at {} !! add: {}".format(PC , int(memory[bintodec(MAR)])))
+    
+
+    #!SUB M(X)
     elif(IR=="00000110"):
         AC-=int(memory[bintodec(MAR)])
-        print("found a subtract operation!")
+        print("found a subtract operation at {} !!, subtract: {}".format(PC , int(memory[bintodec(MAR)])))
+    
+    #! Sub |M(x)|
+    elif(IR=="00001000"):
+        AC-=abs(int(memory[bintodec(MAR)]))
+        print("found a subtract operation at {} !!, subtract: {}".format(PC , int(memory[bintodec(MAR)])))
+    
+    #! div(M(x))
+    elif(IR=="00001100"):
+        MQ = AC/int(memory[bintodec(MAR)])
+        AC%=(int(memory[bintodec(MAR)]))
+        print("found a subtract operation at {} !!, subtract: {}".format(PC , int(memory[bintodec(MAR)])))
+    
+    #! LSH
+    elif(IR == "00010100"):
+        AC*=2
+
+    #! RSH
+    elif(IR=="00010101"):
+        AC/=2
+
+    #? --------------------- END ARITHMETIC OPERATIONS ---------------------------
 
 
+
+    #TODO:  UNDER_DEVELOPMENT_Branching
+    #! Remember not to jump back to a smaller value, it'll drive an infinite loop.
+
+    #? --------------------- BEGIN BRANCHING OPS ---------------------------------
+
+    #! JUMP M(X , 0:19)  => unconditional jump and take next from left...
+    elif(IR=="00001101"):
+        print( 'found the JUMP Instruction!! MAR:', (MAR))
+        x = bintodec(MAR)
+        PC = x-1
+        print("x : " , x)
+        # pass
+        # PC = int(memory(bintodec(MAR)))
+    #? --------------------- END BRANCHING OPS -----------------------------------
+    
     print('AC:_' , AC)
 
 
 
 def fetch():
-    global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC
+    global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC; global MQ
     # print(PC); print(HALT);       # HALT : 1111111111111111111111111111111111111111
     while(True):
         if(IBR==""):           # only left instruction remaining..
@@ -94,20 +173,26 @@ def fetch():
             # print(MBR)
             if(MBR==HALT):
                 print('found the halt instruction at {}'.format(PC))
+                sys.exit("Exitting after HALT Invoked...")
                 break
             left = MBR[:20]; right = MBR[20:]
             lopcode = left[:8]; ropcode = right[:8]
             laddress = left[8:]; raddress = right[8:]
             print('-- first --')
-            print(bintodec(laddress) , bintodec(raddress))
+            try:
+                print(bintodec(laddress) , bintodec(raddress))
+            except:
+                print("We fucked up!!" , left , right)
             print()
 
             if(lopcode=="00000000" and ropcode != "00000000"):
                 print('found a standalone at {}'.format(PC))
                 IR = ropcode; 
                 MAR = raddress
+                PC+=1
                 execute()
-                PC+=1; continue
+                # PC+=1 
+                continue
             else:
                 IBR = right
                 IR = lopcode; 
