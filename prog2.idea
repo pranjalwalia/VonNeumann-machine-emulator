@@ -1,0 +1,23 @@
+==================================
+M(100) => a = 2
+M(101) => b = 3
+M(102) => d = 5
+M(200) => c = 0 (stor destination)
+
+if( a>=b )
+    	c = a-b;
+else 
+	c = a+b;
+
+load M(100) , sub M(101)
+conditional jmp( a >= b ) , NULL        // jump to the if() instructions
+
+-- else set --							=> this implemented here i.e NO conditional jump
+load M[100] , add M[101]				
+stor M[200], NULL
+HALT()
+
+-- if set --
+load M[100] , sub M[101]
+stor M[200] , NULL
+HALT()

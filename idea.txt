@@ -1,0 +1,28 @@
+
+load -1  , conditional jmp to end  
+add m(101) , conditional jmp end 
+add 100 alone 
+halt
+//============================//
+
+M(100) => 2
+M(101) => 3
+M(200) => stor destination
+
+if( a>=b )
+	c = a-b;
+else  c = a+b;
+
+load M(100) , sub M(101)
+conditional jmp( a >= b ) , NULL	// jump to the if() instructions
+
+--else set--
+load M[100] , add M[101]
+stor M[200], NULL
+HALT()
+
+--if set--
+load M[100] , sub M[101]
+stor M[200] , NULL
+HALT()
+
