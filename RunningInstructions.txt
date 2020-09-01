@@ -1,0 +1,65 @@
+Pranjal Walia
+IMT2019062
+
+Running Requirements:
+    -- Preferebly run on a linux distribution (ubuntu/fedora etc) as we will be using some terminal commands to pass in the machine code
+    -- Installed version of python3.x 
+
+
+Intro:
+    -- The project is a submission for ComputerArch. Assignment 1
+    -- An emulation of the IAS Instruction Set, implemented using python3.x
+    
+    -- Project Core Structure:
+        -- main.py
+        -- input.txt, output.txt
+        -- *.idea file(s)
+        -- *.example file(s)
+
+    -- main.py => The main entry point to the program and contains the entire implementation.    
+    -- input.txt => main.py will open this file in run-time to fetch the machine code.
+    -- output.txt => the entire memory structure of the IAS computer is printed in this, i.e an array of 40 bit per field.
+    -- <filename>.idea and <filename>.example are analogoues of each other,
+            -- <filename>.idea => contains the code that is to be emulated
+            -- <filename>.example => contains the machine code that is going to be used to run main.py
+
+Running Commands:
+    -- Inside the Project Directory:
+        -$ cat fileName.idea => appends to the terminal an overview of the instruction you are about to implement using the IAS. (---OPTIONAL---)
+        -$ cat fileName.example > input.txt
+        -$ python3 main.py
+
+        Example 1: Implements a simple if/else program with some basic ALU operations.
+            $ cat prog1.idea                     
+            $ cat prog1.example > input.txt
+            $ python3 main.py
+
+        Example 2: Checks if a number is Odd or Even and performs corresponding ALU operations.
+            $ cat prog3.idea                     
+            $ cat prog3.example > input.txt
+            $ python3 main.py
+
+        -- Other example codes should also be executed in the above fashion.
+
+
+Important Stuff to Remember!
+    -- ! Make Sure that the contents of *.example files are not changed.
+    -- ! It is preffered to use the cat command to copy the ".example" files into "input.txt",
+            because any Additional Spaces in the end of file in input.txt after copying will cause the program to crash,
+            or any change in the machine code that disrupts the HALT() instruction (at End of file) will cause an Infinite Loop.
+    -- ! Make sure that the ".idea" and ".example" currently being tested have the same name.
+
+
+Description:
+    -- The project is broadly divided into two parts:
+        ! main.py: 
+            The main module where the IAS machine resides, all the relevant methods of the machine can be found here.
+            -- fetch_cycle()
+            -- execute_cycle()
+            -- memory_ops()
+        ! mathStuff.py
+            -- contains functions relevant for all the conversions of two's compliment binary strings to decimal and vice-versa,
+                for the purpose of calculations, this is implemented seperately as it is not relevant to the working procedure of the IAS machine.
+            -- These are used throughout the entire program to encode and decode input/output values for addresses/data.
+
+        

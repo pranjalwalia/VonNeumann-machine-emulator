@@ -1,4 +1,5 @@
 import sys,os
+from mathStuff import *
 
 PC = 1
 MBR = ""
@@ -16,6 +17,7 @@ def make_halt():
     for i in range(20):
         HALT+="1"
 
+'''
 def twos_comp(val, bits):
     """compute the 2's complement of int value val"""
     if (val & (1 << (bits - 1))) != 0: # if sign bit is set e.g., 8bit: 128-255
@@ -34,7 +36,7 @@ def num_to_bin(num, wordsize):
     base = bin(num)[2:]
     padding_size = wordsize - len(base)
     return '0' * padding_size + base
-
+'''
 
 
 def init_memory():
@@ -73,6 +75,13 @@ def set_memory():
         memory[103] = "1111111111111111111111111111111111111111" #! -1
 
     f.close()
+
+def get_memory():
+    outf = open('out.txt', 'w')
+    for line in memory:
+        outf.write(line + '\n')
+    outf.close()
+
 
 
 def execute():
@@ -244,12 +253,6 @@ def fetch():
             PC+=1
         execute(); print("Executing...")
 
-
-def get_memory():
-    outf = open('out.txt', 'w')
-    for line in memory:
-        outf.write(line + '\n')
-    outf.close()
 
 
 if __name__ == "__main__":
