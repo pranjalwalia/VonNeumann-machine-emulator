@@ -10,78 +10,6 @@ HALT = "1"*40
 AC=0
 MQ=0
 
-'''
-def make_halt():
-    global HALT;
-    for i in range(20):
-        HALT+="1"
-    for i in range(20):
-        HALT+="1"
-
-def twos_comp(val, bits):
-    """compute the 2's complement of int value val"""
-    if (val & (1 << (bits - 1))) != 0: # if sign bit is set e.g., 8bit: 128-255
-        val = val - (1 << bits)        # compute negative value
-    return val                         # return positive value as is
-
-def bindec(n):
-    return int(n,2)
-
-def bintodec(s):
-    return twos_comp(bindec(s) , len(s))
-
-def num_to_bin(num, wordsize):
-    if num < 0:
-        num = 2**wordsize+num
-    base = bin(num)[2:]
-    padding_size = wordsize - len(base)
-    return '0' * padding_size + base
-
-def init_memory():
-    element = "0" * 40
-    for i in range(1001):
-        memory.append(element)
-    return
-
-
-def set_memory():
-    f = open('input.txt', 'r'); 
-    top=1;
-    for line in f:
-        if len(line)!=0:
-            left, right = line.split(); left = str(left); right = str(right)
-
-            lopcode = left[:8]; ropcode = right[:8]
-            laddress = left[8:]; raddress = right[8:]
-
-            # check for stand-alone instruction, if lop gets some assigned opcode and rop remains initial value => stand-alone => store in the right
-            if(lopcode != '00000000' and ropcode == '00000000'):
-                memory[top]=right+left
-                print('Found a stand-alone at {}'.format(top))
-            else:
-                memory[top] = left+right
-            top+=1;
-        
-        else:
-            break
-
-        #! Hardcode Demo => if(a >= b)
-        #! testing variables
-        memory[100] = "0000000000000000000000000000000000000010" #! 2
-        memory[101] = "0000000000000000000000000000000000000011" #! 3
-        memory[102] = "0000000000000000000000000000000000000101" #! 5
-        memory[103] = "1111111111111111111111111111111111111111" #! -1
-
-    f.close()
-
-def get_memory():
-    outf = open('out.txt', 'w')
-    for line in memory:
-        outf.write(line + '\n')
-    outf.close()
-'''
-
-
 class MemoryOps:
     def __init__(self):
         pass
@@ -178,7 +106,7 @@ class IAS:
 
 
 
-        #? --------------------- BEGIN ARITHMETIC OPERATIONS ---------------------------
+        #? --------------------- BEGIN ARITHMETIC OPS ---------------------------
         #!ADD M(X)
         if(IR == "00000101"):
             AC+=int(bintodec(str(memory[bintodec(MAR)])))
@@ -204,6 +132,7 @@ class IAS:
         if(IR == "00001011"):
             print("Found the Multiply ...AC = MQ*M(x).....MQ = {} and M(x)= {}".format(MQ , int(bintodec(str(memory[bintodec(MAR)])))))
             AC = MQ*int(bintodec(str(memory[bintodec(MAR)])))
+
             res = num_to_bin(AC , 80)
             if(res[:40]!="0000000000000000000000000000000000000000"):
                 AC = res[:40]; MQ = res[40:]
@@ -228,13 +157,13 @@ class IAS:
         if(IR=="00010101"):
             AC/=2
 
-        #? --------------------- END ARITHMETIC OPERATIONS ---------------------------
+        #? --------------------- END ARITHMETIC OPS ---------------------------
 
 
 
         #? --------------------- BEGIN BRANCHING OPS ---------------------------------
 
-        #! Remember not to jump back to a smaller value, it'll drive an infinite loop.
+        #! Remember not to jump back to a smaller value of PC, it'll drive an infinite loop.
 
         #! JUMP M(X , 0:19)  => unconditional jump and take next from left...
         if(IR=="00001101"):

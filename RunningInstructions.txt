@@ -23,6 +23,8 @@ Intro:
             -- <filename>.idea => contains the code that is to be emulated
             -- <filename>.example => contains the machine code that is going to be used to run main.py
 
+
+
 Running Commands:
     -- Inside the Project Directory:
         -$ cat fileName.idea => appends to the terminal an overview of the instruction you are about to implement using the IAS. (---OPTIONAL---)
@@ -42,6 +44,7 @@ Running Commands:
         -- Other example codes should also be executed in the above fashion.
 
 
+
 Important Stuff to Remember!
     -- ! Make Sure that the contents of *.example files are not changed.
     -- ! It is preffered to use the cat command to copy the ".example" files into "input.txt",
@@ -50,16 +53,26 @@ Important Stuff to Remember!
     -- ! Make sure that the ".idea" and ".example" currently being tested have the same name.
 
 
+
 Description:
     -- The project is broadly divided into two parts:
         ! main.py: 
             The main module where the IAS machine resides, all the relevant methods of the machine can be found here.
-            -- fetch_cycle()
-            -- execute_cycle()
-            -- memory_ops()
+                class IAS:
+                    -- fetch_cycle() 
+                    -- execute_cycle()
+
+                class MemoryOps:
+                    -- contains the relevent memory operations such as initialise_memory, set_memory , get_final_memory
+
         ! mathStuff.py
             -- contains functions relevant for all the conversions of two's compliment binary strings to decimal and vice-versa,
-                for the purpose of calculations, this is implemented seperately as it is not relevant to the working procedure of the IAS machine.
-            -- These are used throughout the entire program to encode and decode input/output values for addresses/data.
+                for the purpose of calculations and memory_addressing, 
+                    this is implemented seperately as it is not relevant to the working procedure of the IAS machine.
+            -- These are used throughout the entire program to encode and decode input/output values or addresses/data.
 
-        
+
+
+Implementation Details:
+    class IAS:
+        -- fetch_cycle():
