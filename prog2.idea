@@ -12,12 +12,12 @@ else
 load M(100) , sub M(101)
 conditional jmp( a >= b ) , NULL        // jump to the if() instructions
 
--- else set --							=> this implemented here i.e NO conditional jump
+-- [else set] --							=> this implemented here i.e NO conditional jump and add them
 load M[100] , add M[101]				
 stor M[200], NULL
 HALT()
 
--- if set --
+-- [if set] --
 load M[100] , sub M[101]
 stor M[200] , NULL
 HALT()

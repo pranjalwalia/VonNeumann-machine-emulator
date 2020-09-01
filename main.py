@@ -16,8 +16,25 @@ def make_halt():
     for i in range(20):
         HALT+="1"
 
-def bintodec(n):
+def twos_comp(val, bits):
+    """compute the 2's complement of int value val"""
+    if (val & (1 << (bits - 1))) != 0: # if sign bit is set e.g., 8bit: 128-255
+        val = val - (1 << bits)        # compute negative value
+    return val                         # return positive value as is
+
+def bindec(n):
     return int(n,2)
+
+def bintodec(s):
+    return twos_comp(bindec(s) , len(s))
+
+def num_to_bin(num, wordsize):
+    if num < 0:
+        num = 2**wordsize+num
+    base = bin(num)[2:]
+    padding_size = wordsize - len(base)
+    return '0' * padding_size + base
+
 
 
 def init_memory():
@@ -40,7 +57,7 @@ def set_memory():
             # check for stand-alone instruction, if lop gets some assigned opcode and rop remains initial value => stand-alone => store in the right
             if(lopcode != '00000000' and ropcode == '00000000'):
                 memory[top]=right+left
-                # print('found a stand-alone at {}'.format(top))
+                print('Found a stand-alone at {}'.format(top))
             else:
                 memory[top] = left+right
             top+=1;
@@ -48,65 +65,54 @@ def set_memory():
         else:
             break
 
-
-        # !Hardcode demo1 => if(a < b)
-        '''
-        # memory[16] = "20"; memory[17] = "2"; memory[18] = "10"; memory[19] = "1"; memory[20] = "-1";
-        memory[100] = "2"; memory[101] = "3" ; memory[200]="0"
-        '''
-        
-        #! Hardcode Demo2 => if(a >= b)
-        # '''
-        # memory[16] = "20"; memory[17] = "2"; memory[18] = "10"; memory[19] = "1"; memory[20] = "-1";
-        memory[100] = "2"; memory[101] = "3";memory[102] = "5" ;  memory[200]="0"
-        # '''
+        #! Hardcode Demo => if(a >= b)
+        ''' Testing Variables '''
+        memory[100] = "0000000000000000000000000000000000000010" #! 2
+        memory[101] = "0000000000000000000000000000000000000011" #! 3
+        memory[102] = "0000000000000000000000000000000000000101" #! 5
+        memory[103] = "1111111111111111111111111111111111111111" #! -1
 
     f.close()
-
-'''
-LOAD M(x) Add M(x)
-Stor M(x) Add M(x)
-JUMP (x,left) Sub M(x)
-Halt()
-'''
-
 
 
 def execute():
     global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC; global MQ
     
     #?------------------------BEGIN DATA TRANSFER OPS------------------------------
+
     #!LOAD M(X)
     if(IR == "00000001"):
-        AC = int(memory[bintodec(MAR)])
-        print("Found the LOAD Instruction at {} !! load: {}".format(PC , int(memory[bintodec(MAR)])))
+        AC = int(bintodec(str(memory[bintodec(MAR)])))
+        print("Found the LOAD, LOAD to AC, at !! load: {}".format(int(memory[bintodec(MAR)])))
 
     #! LOAD MQ,MX
-    if("00001001"):
-        MQ = int(memory[bintodec(MAR)])
-        
-    #! LOAD MQ
-    if(IR=="00001010"):
-        AC = MQ
+    if (IR == "00001001"):
+        print('load to the MQ: ' , int(bintodec(str(memory[bintodec(MAR)]))) , 'from:' , int(bintodec(MAR)) )
+        MQ = int(bintodec(str(memory[bintodec(MAR)])))
 
+    #! LOAD from MQ
+    if(IR=="00001010"):
+        print("Load from MQ executed ! at " , int(bintodec(MAR)))
+        AC = MQ
 
     #!STOR M(X)
     if(IR=="00100001"):
-        print("Found the !!!! store! !!!!!!!!!!!!!!!!!!!")
-        memory[bintodec(MAR)] = str(AC)
-        print("Found the STOR at {}!! content at {}  => {}".format( PC, bintodec(MAR), memory[bintodec(MAR)]))
+        memory[bintodec(MAR)] = num_to_bin(int(AC) , 40) + "  =>  "+ str(AC)
+        memory[bintodec(MAR)+2] = num_to_bin(int(MQ) , 40) + "  =>  "+ str(MQ)
+        print("Found the STOR , content at {}  => {}".format( bintodec(MAR), memory[bintodec(MAR)]))
+        print("stored the MQ just one below")
 
     #!LOAD -M(X)
     if(IR == "00000010"):
-        AC = int(memory[bintodec(MAR)]); AC*=(-1)
+        AC = int(bintodec(str(memory[bintodec(MAR)]))); AC*=(-1)
 
-    #!LOAD abs_M(X)
+    #!LOAD abs(M(X))
     if(IR == "00000011"):
-        AC = abs(int(memory[bintodec(MAR)]))
+        AC = abs(int(bintodec(str(memory[bintodec(MAR)]))))
     
-    #!LOAD -abs_M(X)
+    #!LOAD -abs(M(X))
     if(IR == "00000100"):
-        AC = abs(int(memory[bintodec(MAR)])); AC*=(-1)
+        AC = int(bintodec(str(memory[bintodec(MAR)]))); AC*=(-1)
     
 
     #?------------------------END DATA TRANSFER OPS------------------------------
@@ -116,84 +122,87 @@ def execute():
     #? --------------------- BEGIN ARITHMETIC OPERATIONS ---------------------------
     #!ADD M(X)
     if(IR == "00000101"):
-        AC+=int(memory[bintodec(MAR)])
-        print("Found the ADD Instruction at {} !! add: {}".format(PC , int(memory[bintodec(MAR)])))
+        AC+=int(bintodec(str(memory[bintodec(MAR)])))
+        print("Found the ADD, add: {}".format(int(memory[bintodec(MAR)])))
     
     #! ADD abs(M(x))
     if(IR == "00000111"):
-        AC+=abs(int(memory[bintodec(MAR)]))
-        print("Found the abs ADD Instruction at {} !! add: {}".format(PC , int(memory[bintodec(MAR)])))
+        AC+=abs(int(bintodec(str(memory[bintodec(MAR)]))))
+        print("Found the abs ADD, add: {}".format(int(memory[bintodec(MAR)])))
     
 
     #!SUB M(X)
     if(IR=="00000110"):
-        AC-=int(memory[bintodec(MAR)])
+        AC-=int(bintodec(str(memory[bintodec(MAR)])))
         print("found a subtract operation at {} !!, subtract: {}".format(PC , int(memory[bintodec(MAR)])))
     
     #! Sub |M(x)|
     if(IR=="00001000"):
-        AC-=abs(int(memory[bintodec(MAR)]))
-        print("found a subtract operation at {} !!, subtract: {}".format(PC , int(memory[bintodec(MAR)])))
+        AC-=abs(int(bintodec(str(memory[bintodec(MAR)]))))
+        print("found a subtract, sub_mod: {}".format(int(memory[bintodec(MAR)])))
     
+    #! multiply(m(x)) => m(x)*MQ 
+    if(IR == "00001011"):
+        print("Found the Multiply ...AC = MQ*M(x).....MQ = {} and M(x)= {}".format(MQ , int(bintodec(str(memory[bintodec(MAR)])))))
+        AC = MQ*int(bintodec(str(memory[bintodec(MAR)])))
+        res = num_to_bin(AC , 80)
+        if(res[:40]!="0000000000000000000000000000000000000000"):
+            AC = res[:40]; MQ = res[40:]
+
     #! div(M(x))
     if(IR=="00001100"):
-        MQ = AC/int(memory[bintodec(MAR)])
-        AC%=(int(memory[bintodec(MAR)]))
-        print("found a subtract operation at {} !!, subtract: {}".format(PC , int(memory[bintodec(MAR)])))
-    
+        if(int(memory[bintodec(MAR)]) == 0):
+            AC = -1
+            sys.exit("Found a Possible Zero Division Error....Aborting!")
+        else:
+            #! MQ = AC/int(memory[bintodec(MAR)])   => remember not to divide upto floats 
+            MQ = int(AC/int(bintodec(str(memory[bintodec(MAR)]))))
+            AC%=(int(bintodec(str(memory[bintodec(MAR)]))))
+            print('AC:' , AC); print("MQ:", MQ)
+            print("found a divide operation, divide: ".format(int(memory[bintodec(MAR)])))
+        
     #! LSH
-    elif(IR == "00010100"):
+    if(IR == "00010100"):
         AC*=2
 
     #! RSH
-    elif(IR=="00010101"):
+    if(IR=="00010101"):
         AC/=2
 
     #? --------------------- END ARITHMETIC OPERATIONS ---------------------------
 
 
-
-    #TODO:  UNDER_DEVELOPMENT_Branching
-    #! Remember not to jump back to a smaller value, it'll drive an infinite loop.
-
     #? --------------------- BEGIN BRANCHING OPS ---------------------------------
 
+    #! Remember not to jump back to a smaller value, it'll drive an infinite loop.
+
     #! JUMP M(X , 0:19)  => unconditional jump and take next from left...
-    elif(IR=="00001101"):
+    if(IR=="00001101"):
         print( 'found the UNCONDITIONAL JUMP Instruction => JUMPING !! MAR:', (MAR))
         x = bintodec(MAR)
         PC = x
-        print("x : " , x)
-        # pass
-        # PC = int(memory(bintodec(MAR)))
     
     #! Conditional left JUMP(X , 0:19)
-    elif(IR=="00001111"):
+    if(IR=="00001111"):
         if(AC >= 0):
             print("Found the CONDITIONAL JUMP (jumping) !! MAR:" , MAR)
             x = bintodec(MAR)
             PC = x
-            print("x : " , x)
         else:
             print("Not Jumping BRUHH!")
-        # pass
 
     #? --------------------- END BRANCHING OPS -----------------------------------
-    
     print('AC:_' , AC)
 
 
 
 def fetch():
     global PC; global IBR; global IR ; global MAR ; global MBR; global HALT; global AC; global MQ
-    # print(PC); print(HALT);       # HALT : 1111111111111111111111111111111111111111
+    #! HALT : 1111111111111111111111111111111111111111
     while(True):
         if(IBR==""):           # only left instruction remaining..
             MAR = str(PC)
             MBR = memory[int(MAR)]
-            # print(MAR)
-            print("PC:_" , PC)
-            # print(MBR)
             if(MBR==HALT):
                 print('found the HALT instruction at {}....exitting!'.format(PC))
                 #! sys.exit("Exitting after HALT Invoked...")   => this stops file IO
@@ -201,20 +210,18 @@ def fetch():
             left = MBR[:20]; right = MBR[20:]
             lopcode = left[:8]; ropcode = right[:8]
             laddress = left[8:]; raddress = right[8:]
-            print('-- first --')
             try:
                 print(bintodec(laddress) , bintodec(raddress))
             except:
-                print("We fucked up!!" , left , right)
+                print("Check the instructions and run again" , left , right)
             print()
 
             if(lopcode=="00000000" and ropcode != "00000000"):
-                print('found a standalone at {}'.format(PC))
+                print('Found a standalone Instruction at {}'.format(PC))
                 IR = ropcode; 
                 MAR = raddress
                 PC+=1
                 execute(); print("Executing !!!")
-                # PC+=1 
                 continue
             else:
                 IBR = right
@@ -228,24 +235,20 @@ def fetch():
             IBR_addr = IBR[8:]
             IR = IBR_opcode
             MAR = IBR_addr
-            print('-- second --')
-            print('IBR:_' , IBR)
-            print('opcode:_' , IBR_opcode)
-            print('adrr:_' , IBR_addr)
+            print('IBR:_ ' , IBR)
+            print('Opcode:_' , IBR_opcode)
+            print('Address:_' , IBR_addr)
             IBR = ""
-            print(bintodec(laddress) , bintodec(raddress))
+            # print(bintodec(laddress) , bintodec(raddress))
             print()
             PC+=1
-        execute(); print("Executing !!!")
+        execute(); print("Executing...")
 
 
 def get_memory():
     outf = open('out.txt', 'w')
     for line in memory:
-        # if(len(line) < 20):
-        #     print(int(line))
         outf.write(line + '\n')
-    outf.write('pranjal walia')
     outf.close()
 
 

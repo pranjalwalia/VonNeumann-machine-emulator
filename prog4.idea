@@ -1,0 +1,18 @@
+int x; cin >> x;
+if(x&1)
+    x*=2; cout << x;
+else
+    x/=2; cout << x;
+
+//==================================
+
+LOAD M(x) , div(2)
+add(-1)  , NULL
+conditional jmp(AC)
+load(m(x)) , div(2)
+stor , NULL
+halt()
+
+load(mq, m(x)) , mul(2)
+stor , NULL
+halt()

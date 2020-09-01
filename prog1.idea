@@ -18,6 +18,6 @@ stor M[200], NULL
 HALT()
 
 -- if set --
-load M[100] , sub M[101]                => this implemented here i.e a conditional jump
+load M[100] , sub M[101]                => this implemented here i.e a conditional jump and sub
 stor M[200] , NULL
 HALT()
