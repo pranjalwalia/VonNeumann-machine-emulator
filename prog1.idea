@@ -1,23 +1,26 @@
-==================================
+	   PROGRAM 1
+====================================
+if(a >= b)
+    	c = a-b;
+else 
+	c = a+b;
+====================================
+	CONTENTS:
 M(100) => a = 2
 M(101) => b = 3
 M(102) => d = 5
 M(200) => c = 0 (stor destination)
+====================================
 
-if( a>=b )
-    	c = a-b;
-else 
-	c = a+b;
-
-load M(100) , sub M(101)
-conditional jmp( a >= b ) , NULL        // jump to the if() instructions
+LOAD M(100), SUB M(101)
+conditional JMP(a>=b), NULL    => jump to the if() instructions, else execute from here only
 
 -- else set --							
-load M[100] , add M[101]				
-stor M[200], NULL
+LOAD M[100] , ADD M[101]				
+STOR M[200], NULL
 HALT()
 
 -- if set --
-load M[100] , sub M[101]                => this implemented here i.e a conditional jump and sub
-stor M[200] , NULL
+LOAD M[100] , SUB M[101]       => Program should Implement this part i.e a Conditional JMP and SUB.
+STOR M[200] , NULL
 HALT()

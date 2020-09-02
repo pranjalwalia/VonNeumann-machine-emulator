@@ -1,18 +1,39 @@
-int x; cin >> x;
-if(x&1)
-    x*=2; cout << x;
-else
-    x/=2; cout << x;
+	   PROGRAM 3
+====================================
+x = int(input())
+if(x&1):                => check if x is odd.                
+    x*=2;
+    print(x)
 
-//==================================
+else:
+    x/=2;
+    print(x)
+====================================
+Q. How to check for odd/even?
+    -- load the number, divide by 2 and add(-1)
+    -- Now a conditional jump (if we jmp => number is odd)
+    -- LOAD(MQ , M(x)) instruction is used here in the multiply case.
+    -- Notice:
+            -- if number is odd => final output is at 210
+            -- number is even => final output is at 205
+    Machine code for this is below.
+====================================
+    CONTENTS:
+M(100) => a = 2
+M(101) => b = 3
+M(102) => d = 5
+M(103) => e = -1
+M(200) => c = 0 (stor destination)
+====================================
+LOAD M(102), DIV(100)
+ADD(103), NULL
+conditional JMP(if x odd), NULL
 
-LOAD M(x) , div(2)
-add(-1)  , NULL
-conditional jmp(AC)
-load(m(x)) , div(2)
-stor , NULL
-halt()
+-- else --
+LOAD(102), DIV(100)
+STOR(205), NULL
+HALT()
 
-load(mq, m(x)) , mul(2)
-stor , NULL
-halt()
+-- if --
+LOAD(MQ , M(102)), MUL(100)
+STOR(210), NULL

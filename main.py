@@ -51,7 +51,7 @@ class MemoryOps:
         f.close()
 
     def get_memory(self):
-        outf = open('out.txt', 'w')
+        outf = open('output.txt', 'w')
         for line in memory:
             outf.write(line + '\n')
         outf.close()
@@ -70,7 +70,7 @@ class IAS:
         #!LOAD M(X)
         if(IR == "00000001"):
             AC = int(bintodec(str(memory[bintodec(MAR)])))
-            print("Found the LOAD, LOAD to AC, at !! load: {}".format(int(memory[bintodec(MAR)])))
+            print("Found the LOAD, LOAD to AC, at !! load: {}".format(int(bintodec(str(memory[bintodec(MAR)])))))
 
         #! LOAD MQ,MX
         if (IR == "00001001"):
@@ -87,7 +87,7 @@ class IAS:
             memory[bintodec(MAR)] = num_to_bin(int(AC) , 40) + "  =>  "+ str(AC)
             memory[bintodec(MAR)+2] = num_to_bin(int(MQ) , 40) + "  =>  "+ str(MQ)
             print("Found the STOR , content at {}  => {}".format( bintodec(MAR), memory[bintodec(MAR)]))
-            print("stored the MQ just one below")
+            print("stored the MQ two memory slots after AC")
 
         #!LOAD -M(X)
         if(IR == "00000010"):
@@ -110,7 +110,7 @@ class IAS:
         #!ADD M(X)
         if(IR == "00000101"):
             AC+=int(bintodec(str(memory[bintodec(MAR)])))
-            print("Found the ADD, add: {}".format(int(memory[bintodec(MAR)])))
+            print("Found the ADD, add: {}".format(int(bintodec(str(memory[bintodec(MAR)])))))
         
         #! ADD abs(M(x))
         if(IR == "00000111"):
@@ -147,7 +147,7 @@ class IAS:
                 MQ = int(AC/int(bintodec(str(memory[bintodec(MAR)]))))
                 AC%=(int(bintodec(str(memory[bintodec(MAR)]))))
                 print('AC:' , AC); print("MQ:", MQ)
-                print("found a divide operation, divide: ".format(int(memory[bintodec(MAR)])))
+                print("found a divide operation, divide: ".format(int(bintodec(str(memory[bintodec(MAR)])))))
             
         #! LSH
         if(IR == "00010100"):
@@ -200,7 +200,8 @@ class IAS:
                 lopcode = left[:8]; ropcode = right[:8]
                 laddress = left[8:]; raddress = right[8:]
                 try:
-                    print(bintodec(laddress) , bintodec(raddress))
+                    # print(bintodec(laddress) , bintodec(raddress))
+                    pass
                 except:
                     print("Check the instructions and run again" , left , right)
                 print()
@@ -210,7 +211,7 @@ class IAS:
                     IR = ropcode; 
                     MAR = raddress
                     PC+=1
-                    IAS.execute(self); print("Executing !!!")
+                    IAS.execute(self); print("Executing...")
                     continue
                 else:
                     IBR = right
@@ -244,4 +245,12 @@ if __name__ == "__main__":
     print()
     machine.fetch()
     memoryInstance.get_memory()
-    print(AC)
+    print()
+    print()
+    print()
+    print("Ending the execution, check output.txt for the input instructions, data , output")
+    print()
+    print("Locating the data in the output.txt can be a challenge because of 1000 lines,\nTherefore it is advisable to set numbering of lines if in vim")
+    print()
+    print('final content of AC:' , AC)
+    print('final content of MQ:' , MQ)
