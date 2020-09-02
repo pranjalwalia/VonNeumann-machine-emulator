@@ -1,6 +1,9 @@
 Pranjal Walia
 IMT2019062
 
+# View the Readme in terminal
+$ cat Readme.txt 
+
 -- The project is a submission for ComputerArch. Assignment 1
 -- An emulation of the IAS Instruction Set, implemented using python3.x
 
@@ -23,6 +26,8 @@ REQUIREMENTS:
 
 
 RUNNING COMMANDS:
+        PICTURES OF THE RUNNING INSTRUCTIONS ARE INSIDE THE IMAGES FOLDER.
+        
     -- Inside the Project Directory:
         -$ cat fileName.idea => appends to the terminal an overview of the instruction you are about to implement using the IAS. (---OPTIONAL---)
         -$ cat fileName.example > input.txt

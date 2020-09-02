@@ -16,7 +16,7 @@ class MemoryOps:
     
     def init_memory(self):
         element = "0" * 40
-        for i in range(1001):
+        for i in range(1000):
             memory.append(element)
         return
 
@@ -248,9 +248,11 @@ if __name__ == "__main__":
     print()
     print()
     print()
-    print("Ending the execution, check output.txt for the input instructions, data , output")
+    print("Ending the Program, Check 'output.txt' for the Input Instructions, Data , Output")
     print()
     print("Locating the data in the output.txt can be a challenge because of 1000 lines,\nTherefore it is advisable to set numbering of lines if in vim")
     print()
+    print('Note that the memory has zero based indexing! So if output is stored at 100, it will appear at line number 101 in output.txt')
+    print("The same holds for anything written to Memory..")
     print('final content of AC:' , AC)
     print('final content of MQ:' , MQ)
